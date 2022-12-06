@@ -61,10 +61,25 @@ namespace TestCases.BankTransactions
         }
 
         [Theory]
+        [InlineData(1799 ,HttpStatusCode.OK)]
+        [InlineData(1800, HttpStatusCode.OK)]
+        [InlineData(1801, HttpStatusCode.UnprocessableEntity)]
+        public async Task ValidateWithdrawLimitationsTests(int amount, HttpStatusCode expectedStatusCode)
+        {
+            await AccountKeywords.CreateAccount();
+            Guid accountNumber = (await AccountKeywords.GetAvailableAccounts()).First().AccountNumber;
+            await TransactionKeywords.Deposit(accountNumber, TestData.defaultAmount*2);
+
+            HttpResponseMessage response = await TransactionKeywords.Withdraw(accountNumber, amount);
+
+            response.StatusCode.Should().Be(expectedStatusCode);
+        }
+
+        [Theory]
         [InlineData(899 ,HttpStatusCode.OK)]
         [InlineData(900, HttpStatusCode.OK)]
         [InlineData(901, HttpStatusCode.UnprocessableEntity)]
-        public async Task ValidateWithdrawLimitationsTests(int amount, HttpStatusCode expectedStatusCode)
+        public async Task ValidateWithdrawTillMinimumAmountTests(int amount, HttpStatusCode expectedStatusCode)
         {
             await AccountKeywords.CreateAccount();
             Guid accountNumber = (await AccountKeywords.GetAvailableAccounts()).First().AccountNumber;

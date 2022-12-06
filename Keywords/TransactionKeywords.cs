@@ -20,7 +20,9 @@ namespace Keywords
                 Amount = amount
             };
 
-            return await TransactionEndpoints.Deposit(EndpointUrls.DepositUrl, transaction);
+            string url = string.Format(EndpointUrls.DepositUrl, accountNumber);
+
+            return await TransactionEndpoints.Deposit(url, transaction);
         }
 
         public async Task<HttpResponseMessage> Withdraw(Guid accountNumber, int amount)
@@ -30,8 +32,8 @@ namespace Keywords
                 AccountNumber = accountNumber,
                 Amount = amount
             };
-
-            return await TransactionEndpoints.Withdraw(EndpointUrls.WithdrawUrl, transaction);
+            string url = string.Format(EndpointUrls.WithdrawUrl, accountNumber);
+            return await TransactionEndpoints.Withdraw(url, transaction);
         }
     }
 }
